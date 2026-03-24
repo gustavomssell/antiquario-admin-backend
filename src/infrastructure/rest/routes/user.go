@@ -7,10 +7,11 @@ import (
 )
 
 func UserRoutes(router *gin.RouterGroup, controller user.IUserController) {
+	router.POST("/user/", controller.NewUser)
+	
 	u := router.Group("/user")
 	u.Use(middlewares.AuthJWTMiddleware())
 	{
-		u.POST("/", controller.NewUser)
 		u.GET("/", controller.GetAllUsers)
 		u.GET("/:id", controller.GetUsersByID)
 		u.PUT("/:id", controller.UpdateUser)

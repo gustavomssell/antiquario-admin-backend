@@ -6,6 +6,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/joho/godotenv"
 	"github.com/gbrayhan/microservices-go/src/infrastructure/di"
 	logger "github.com/gbrayhan/microservices-go/src/infrastructure/logger"
 	"github.com/gbrayhan/microservices-go/src/infrastructure/rest/middlewares"
@@ -28,6 +29,8 @@ func loadServerConfig() ServerConfig {
 }
 
 func main() {
+	_ = godotenv.Load()
+	
 	// Initialize logger first based on environment
 	env := getEnvOrDefault("GO_ENV", "development")
 	var loggerInstance *logger.Logger
