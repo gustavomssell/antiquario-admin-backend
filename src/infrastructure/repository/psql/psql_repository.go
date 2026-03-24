@@ -6,7 +6,11 @@ import (
 	"strings"
 
 	logger "github.com/gbrayhan/microservices-go/src/infrastructure/logger"
-	"github.com/gbrayhan/microservices-go/src/infrastructure/repository/psql/medicine"
+
+	"github.com/gbrayhan/microservices-go/src/infrastructure/repository/psql/catalog"
+	"github.com/gbrayhan/microservices-go/src/infrastructure/repository/psql/commercial"
+	"github.com/gbrayhan/microservices-go/src/infrastructure/repository/psql/operation"
+	"github.com/gbrayhan/microservices-go/src/infrastructure/repository/psql/product"
 	"github.com/gbrayhan/microservices-go/src/infrastructure/repository/psql/user"
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
@@ -134,6 +138,12 @@ func (r *PSQLRepository) InitDatabase() error {
 		return err
 	}
 
+	err = r.SeedInitialRoles()
+	if err != nil {
+		r.Logger.Error("Error seeding initial roles", zap.Error(err))
+		return err
+	}
+
 	err = r.SeedInitialUser()
 	if err != nil {
 		r.Logger.Error("Error seeding initial user", zap.Error(err))
@@ -147,16 +157,89 @@ func (r *PSQLRepository) InitDatabase() error {
 func (r *PSQLRepository) MigrateEntitiesGORM() error {
 	// Import the models to register them with GORM
 	userModel := &user.User{}
-	medicineModel := &medicine.Medicine{}
+	roleModel := &user.Role{}
+	userProfileModel := &user.UserProfile{}
+
+	categoryModel := &catalog.Category{}
+	periodModel := &catalog.Period{}
+	styleModel := &catalog.Style{}
+	materialModel := &catalog.Material{}
+	tagModel := &catalog.Tag{}
+
+	productSetModel := &product.ProductSet{}
+	productModel := &product.Product{}
+	productMediaModel := &product.ProductMedia{}
+	productDocumentModel := &product.ProductDocument{}
+	productMaterialModel := &product.ProductMaterial{}
+	productTagModel := &product.ProductTag{}
+	restorationOrderModel := &product.RestorationOrder{}
+	restorationLogModel := &product.RestorationLog{}
+
+	supplierModel := &commercial.Supplier{}
+	customerModel := &commercial.Customer{}
+	acquisitionModel := &commercial.Acquisition{}
+	acquisitionItemModel := &commercial.AcquisitionItem{}
+	saleModel := &commercial.Sale{}
+	saleItemModel := &commercial.SaleItem{}
+	paymentModel := &commercial.Payment{}
+
+	commissionRuleModel := &operation.CommissionRule{}
+	consignmentSettingModel := &operation.ConsignmentSetting{}
+	consignmentReturnModel := &operation.ConsignmentReturn{}
+	reservationSettingModel := &operation.ReservationSetting{}
+	customerQualificationModel := &operation.CustomerQualification{}
+	customerReputationModel := &operation.CustomerReputation{}
+	reservationModel := &operation.Reservation{}
+	appraisalModel := &operation.Appraisal{}
+	certificateModel := &operation.Certificate{}
+	auctionModel := &operation.Auction{}
+	auctionItemModel := &operation.AuctionItem{}
+	bidModel := &operation.Bid{}
 
 	// Auto migrate the models to create/update tables
-	err := r.DB.AutoMigrate(userModel, medicineModel)
+	err := r.DB.AutoMigrate(
+		userModel, roleModel, userProfileModel,
+		categoryModel, periodModel, styleModel, materialModel, tagModel,
+		productSetModel, productModel, productMediaModel, productDocumentModel, productMaterialModel, productTagModel,
+		restorationOrderModel, restorationLogModel,
+		supplierModel, customerModel, acquisitionModel, acquisitionItemModel,
+		saleModel, saleItemModel, paymentModel,
+		commissionRuleModel, consignmentSettingModel, consignmentReturnModel, reservationSettingModel,
+		customerQualificationModel, customerReputationModel, reservationModel,
+		appraisalModel, certificateModel, auctionModel, auctionItemModel, bidModel,
+	)
 	if err != nil {
 		r.Logger.Error("Error migrating database entities", zap.Error(err))
 		return err
 	}
 
 	r.Logger.Info("Database entities migration completed successfully")
+	return nil
+}
+
+func (r *PSQLRepository) SeedInitialRoles() error {
+	var count int64
+	r.DB.Model(&user.Role{}).Count(&count)
+	if count > 0 {
+		r.Logger.Info("Roles already exist, skipping seed")
+		return nil
+	}
+
+	defaultRoles := []user.Role{
+		{Name: "admin", Description: "Administrador do Sistema"},
+		{Name: "vendedor", Description: "Vendedor do Antiquário"},
+		{Name: "comprador", Description: "Cliente / Colecionador"},
+		{Name: "restaurador", Description: "Especialista em Restauração"},
+	}
+
+	for _, role := range defaultRoles {
+		if err := r.DB.Create(&role).Error; err != nil {
+			r.Logger.Error("Error creating default role", zap.Error(err), zap.String("role", role.Name))
+			return err
+		}
+	}
+
+	r.Logger.Info("Default roles seeded successfully")
 	return nil
 }
 
@@ -186,6 +269,13 @@ func (r *PSQLRepository) SeedInitialUser() error {
 	newUser := user.User{
 		Email:        email,
 		HashPassword: string(hashedPassword),
+	}
+
+	// Assign admin role if exists
+	var adminRole user.Role
+	if err := r.DB.Where("name = ?", "admin").First(&adminRole).Error; err == nil {
+		adminRoleID := adminRole.ID
+		newUser.RoleID = &adminRoleID
 	}
 
 	err = r.DB.Create(&newUser).Error

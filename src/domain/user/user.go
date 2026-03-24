@@ -15,6 +15,7 @@ type User struct {
 	Status       bool
 	HashPassword string
 	Password     string
+	RoleID       *string // UUID for the role
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
 }

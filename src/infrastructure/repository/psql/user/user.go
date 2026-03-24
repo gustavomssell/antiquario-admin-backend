@@ -20,6 +20,9 @@ type User struct {
 	LastName     string    `gorm:"column:last_name"`
 	Status       bool      `gorm:"column:status"`
 	HashPassword string    `gorm:"column:hash_password"`
+	RoleID       *string   `gorm:"column:role_id;type:uuid"`
+	Role         *Role     `gorm:"foreignKey:RoleID"`
+	Profile      *UserProfile `gorm:"foreignKey:UserID"`
 	CreatedAt    time.Time `gorm:"autoCreateTime:mili"`
 	UpdatedAt    time.Time `gorm:"autoUpdateTime:mili"`
 }
@@ -36,6 +39,7 @@ var ColumnsUserMapping = map[string]string{
 	"lastName":     "last_name",
 	"status":       "status",
 	"hashPassword": "hash_password",
+	"roleId":       "role_id",
 	"createdAt":    "created_at",
 	"updatedAt":    "updated_at",
 }
@@ -306,6 +310,7 @@ func (u *User) toDomainMapper() *domainUser.User {
 		LastName:     u.LastName,
 		Status:       u.Status,
 		HashPassword: u.HashPassword,
+		RoleID:       u.RoleID,
 		CreatedAt:    u.CreatedAt,
 		UpdatedAt:    u.UpdatedAt,
 	}
@@ -320,6 +325,7 @@ func fromDomainMapper(u *domainUser.User) *User {
 		LastName:     u.LastName,
 		Status:       u.Status,
 		HashPassword: u.HashPassword,
+		RoleID:       u.RoleID,
 		CreatedAt:    u.CreatedAt,
 		UpdatedAt:    u.UpdatedAt,
 	}
