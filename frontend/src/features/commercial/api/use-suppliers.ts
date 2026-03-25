@@ -45,7 +45,7 @@ export function useCreateSupplier() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (payload: Partial<Supplier>) => {
-      const { data } = await api.post<Supplier>('/suppliers', payload)
+      const { data } = await api.post<Supplier>('/suppliers/', payload)
       return data
     },
     onSuccess: () => {

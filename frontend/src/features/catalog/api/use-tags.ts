@@ -40,7 +40,7 @@ export function useCreateTag() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (payload: { name: string; description?: string }) => {
-      const { data } = await api.post<Tag>('/tags', payload)
+      const { data } = await api.post<Tag>('/tags/', payload)
       return data
     },
     onSuccess: () => {

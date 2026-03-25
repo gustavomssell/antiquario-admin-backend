@@ -226,10 +226,10 @@ func (r *PSQLRepository) SeedInitialRoles() error {
 	}
 
 	defaultRoles := []user.Role{
-		{Name: "admin", Description: "Administrador do Sistema"},
-		{Name: "vendedor", Description: "Vendedor do Antiquário"},
-		{Name: "comprador", Description: "Cliente / Colecionador"},
-		{Name: "restaurador", Description: "Especialista em Restauração"},
+		{Name: "admin", Description: "Administrador do Sistema", Permissions: "{}"},
+		{Name: "vendedor", Description: "Vendedor do Antiquário", Permissions: "{}"},
+		{Name: "comprador", Description: "Cliente / Colecionador", Permissions: "{}"},
+		{Name: "restaurador", Description: "Especialista em Restauração", Permissions: "{}"},
 	}
 
 	for _, role := range defaultRoles {

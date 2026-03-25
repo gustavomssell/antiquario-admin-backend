@@ -1,4 +1,4 @@
-import { useSearch } from '@tanstack/react-router'
+import { useSearch, Link } from '@tanstack/react-router'
 import {
   Card,
   CardContent,
@@ -17,10 +17,16 @@ export function SignIn() {
     <AuthLayout>
       <Card className='gap-4'>
         <CardHeader>
-          <CardTitle className='text-lg tracking-tight'>Sign in</CardTitle>
+          <CardTitle className='text-lg tracking-tight'>Acesso ao Sistema</CardTitle>
           <CardDescription>
-            Enter your email and password below to <br />
-            log into your account
+            Insira seu email e senha abaixo para acessar sua conta. <br />
+            Ainda não tem cadastro?{' '}
+            <Link
+              to='/sign-up'
+              className='hover:text-primary underline underline-offset-4'
+            >
+              Criar Conta
+            </Link>
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -28,19 +34,19 @@ export function SignIn() {
         </CardContent>
         <CardFooter>
           <p className='text-muted-foreground px-8 text-center text-sm'>
-            By clicking sign in, you agree to our{' '}
+            Ao entrar, você concorda com nossos{' '}
             <a
               href='/terms'
               className='hover:text-primary underline underline-offset-4'
             >
-              Terms of Service
+              Termos de Serviço
             </a>{' '}
-            and{' '}
+            e{' '}
             <a
               href='/privacy'
               className='hover:text-primary underline underline-offset-4'
             >
-              Privacy Policy
+              Política de Privacidade
             </a>
             .
           </p>

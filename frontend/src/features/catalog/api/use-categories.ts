@@ -40,7 +40,7 @@ export function useCreateCategory() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (payload: { name: string; description?: string }) => {
-      const { data } = await api.post<Category>('/categories', payload)
+      const { data } = await api.post<Category>('/categories/', payload)
       return data
     },
     onSuccess: () => {

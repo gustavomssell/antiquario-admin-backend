@@ -55,12 +55,18 @@ export function UserAuthForm({
         password: data.password,
       })
       
-      const { accessToken, user } = response.data
+      const { data: userData, security } = response.data
       
-      auth.setAccessToken(accessToken)
-      auth.setUser(user)
+      auth.setAccessToken(security.jwtAccessToken)
+      auth.setUser({
+        id: userData.id.toString(),
+        name: userData.firstName ? `${userData.firstName} ${userData.lastName}` : userData.userName,
+        username: userData.userName,
+        email: userData.email,
+        roles: ['admin']
+      })
 
-      toast.success(`Welcome back, ${user.name || data.email}!`)
+      toast.success(`Bem-vindo, ${userData.firstName || data.email}!`)
       
       const targetPath = redirectTo || '/'
       navigate({ to: targetPath, replace: true })

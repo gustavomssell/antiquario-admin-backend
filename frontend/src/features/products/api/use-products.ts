@@ -52,7 +52,7 @@ export function useCreateProduct() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (payload: any) => {
-      const { data } = await api.post<Product>('/products', payload)
+      const { data } = await api.post<Product>('/products/', payload)
       return data
     },
     onSuccess: () => {

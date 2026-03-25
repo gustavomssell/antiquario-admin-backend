@@ -40,7 +40,7 @@ export function useCreateStyle() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (payload: { name: string; description?: string }) => {
-      const { data } = await api.post<Style>('/styles', payload)
+      const { data } = await api.post<Style>('/styles/', payload)
       return data
     },
     onSuccess: () => {

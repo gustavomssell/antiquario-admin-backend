@@ -40,7 +40,7 @@ export function useCreatePeriod() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (payload: { name: string; description?: string }) => {
-      const { data } = await api.post<Period>('/periods', payload)
+      const { data } = await api.post<Period>('/periods/', payload)
       return data
     },
     onSuccess: () => {

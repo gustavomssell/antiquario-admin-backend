@@ -89,7 +89,11 @@ func setupRouter(appContext *di.ApplicationContext, logger *logger.Logger) *gin.
 
 	// Agregar middlewares de recuperación y logger personalizados
 	router.Use(gin.Recovery())
-	router.Use(cors.Default())
+	
+	corsConfig := cors.DefaultConfig()
+	corsConfig.AllowAllOrigins = true
+	corsConfig.AllowHeaders = append(corsConfig.AllowHeaders, "Authorization")
+	router.Use(cors.New(corsConfig))
 
 	// Add middlewares
 	router.Use(middlewares.ErrorHandler())

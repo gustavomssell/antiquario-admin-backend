@@ -40,7 +40,7 @@ export function useCreateMaterial() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (payload: { name: string; description?: string }) => {
-      const { data } = await api.post<Material>('/materials', payload)
+      const { data } = await api.post<Material>('/materials/', payload)
       return data
     },
     onSuccess: () => {

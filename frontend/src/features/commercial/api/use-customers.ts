@@ -44,7 +44,7 @@ export function useCreateCustomer() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (payload: Partial<Customer>) => {
-      const { data } = await api.post<Customer>('/customers', payload)
+      const { data } = await api.post<Customer>('/customers/', payload)
       return data
     },
     onSuccess: () => {
